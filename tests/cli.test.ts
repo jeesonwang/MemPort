@@ -66,6 +66,32 @@ describe("runCli", () => {
     expect(stderr).not.toHaveBeenCalled();
   });
 
+  it("uses MEMPORT_HOOK_COMMAND when init installs the hook", async () => {
+    const root = await makeTempDir();
+    const codex = await makeTempDir();
+    tempDirs.push(root, codex);
+    await writeText(join(codex, "memory_summary.md"), "summary");
+
+    const exitCode = await runCli([
+      "init",
+      "--project-root",
+      root,
+      "--codex-path",
+      codex,
+      "--silent"
+    ], {
+      cwd: root,
+      env: { MEMPORT_HOOK_COMMAND: "echo custom-hook" },
+      homeDir: join(root, "home"),
+      stdout: vi.fn(),
+      stderr: vi.fn()
+    });
+
+    expect(exitCode).toBe(0);
+    const settings = JSON.parse(await readText(join(root, ".claude", "settings.local.json")));
+    expect(settings.hooks.SessionStart[0].hooks[0].command).toBe("echo custom-hook");
+  });
+
   it("returns non-zero for unknown commands", async () => {
     const stdout = vi.fn();
     const stderr = vi.fn();

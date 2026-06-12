@@ -94,4 +94,67 @@ describe("syncSkills", () => {
     expect(result.synced).toBe(1);
     expect(result.warnings[0]?.code).toBe("PERSONAL_SKILL_SHADOWS_PROJECT_SKILL");
   });
+
+  it("repairs a MemPort-managed project skill when the target content drifts", async () => {
+    const root = await makeTempDir();
+    const codex = await makeTempDir();
+    tempDirs.push(root, codex);
+    await writeText(join(codex, "skills", "demo", "SKILL.md"), "codex skill");
+
+    await syncSkills({
+      projectRoot: root,
+      codexPath: codex,
+      homeDir: join(root, "home"),
+      runId: "run-1",
+      now: new Date("2026-06-11T07:30:00.000Z"),
+      toolVersion: "0.1.0"
+    });
+
+    await writeText(join(root, ".claude", "skills", "demo", "SKILL.md"), "tampered project skill");
+
+    const result = await syncSkills({
+      projectRoot: root,
+      codexPath: codex,
+      homeDir: join(root, "home"),
+      runId: "run-2",
+      now: new Date("2026-06-11T07:31:00.000Z"),
+      toolVersion: "0.1.0"
+    });
+
+    expect(result.changed).toBe(true);
+    await expect(readText(join(root, ".claude", "skills", "demo", "SKILL.md"))).resolves.toBe("codex skill");
+  });
+
+  it("does not reload skills when only skipped source files change", async () => {
+    const root = await makeTempDir();
+    const codex = await makeTempDir();
+    tempDirs.push(root, codex);
+    await writeText(join(codex, "skills", "demo", "SKILL.md"), "codex skill");
+
+    await syncSkills({
+      projectRoot: root,
+      codexPath: codex,
+      homeDir: join(root, "home"),
+      runId: "run-1",
+      now: new Date("2026-06-11T07:30:00.000Z"),
+      toolVersion: "0.1.0"
+    });
+    const markerBefore = JSON.parse(await readText(join(root, ".claude", "skills", "demo", ".memport.json")));
+
+    await writeText(join(codex, "skills", "demo", ".DS_Store"), "noise");
+
+    const result = await syncSkills({
+      projectRoot: root,
+      codexPath: codex,
+      homeDir: join(root, "home"),
+      runId: "run-2",
+      now: new Date("2026-06-11T07:31:00.000Z"),
+      toolVersion: "0.1.0"
+    });
+    const markerAfter = JSON.parse(await readText(join(root, ".claude", "skills", "demo", ".memport.json")));
+
+    expect(result.changed).toBe(false);
+    expect(markerAfter.managedAt).toBe(markerBefore.managedAt);
+    expect(markerAfter.sourceHash).toBe(markerBefore.sourceHash);
+  });
 });

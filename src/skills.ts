@@ -24,6 +24,7 @@ export interface SyncSkillsResult {
 }
 
 const SKIP_NAMES = new Set([".git", ".DS_Store", "node_modules", "__pycache__"]);
+const MARKER_NAME = ".memport.json";
 
 async function pathExists(path: string): Promise<boolean> {
   try {
@@ -80,6 +81,11 @@ async function copySkillSource(source: string, destination: string): Promise<voi
   });
 }
 
+function shouldHashSkillOutput(relativePath: string): boolean {
+  const parts = relativePath.split("/");
+  return !parts.some((part) => SKIP_NAMES.has(part) || part === MARKER_NAME || part.endsWith(".tmp"));
+}
+
 export async function syncSkills(input: SyncSkillsInput): Promise<SyncSkillsResult> {
   const skills = await discoverCodexSkills(input.codexPath);
   const claudeDir = join(input.projectRoot, ".claude");
@@ -117,7 +123,7 @@ export async function syncSkills(input: SyncSkillsInput): Promise<SyncSkillsResu
 
     const staged = join(stagingRoot, skill.name);
     await copySkillSource(skill.sourcePath, staged);
-    const sourceHash = await hashDirectory(skill.sourcePath);
+    const sourceHash = await hashDirectory(staged, { shouldInclude: shouldHashSkillOutput });
     const nextMarker: MemportSkillMarker = {
       managedBy: "memport",
       sourcePath: skill.sourcePath,
@@ -128,7 +134,8 @@ export async function syncSkills(input: SyncSkillsInput): Promise<SyncSkillsResu
     await writeFile(join(staged, ".memport.json"), `${JSON.stringify(nextMarker, null, 2)}\n`, "utf8");
 
     const previousHash = marker?.sourceHash;
-    if (previousHash !== sourceHash) {
+    const targetHash = targetExists ? await hashDirectory(target, { shouldInclude: shouldHashSkillOutput }) : null;
+    if (previousHash !== sourceHash || targetHash !== sourceHash) {
       const oldTarget = join(stagingRoot, `${skill.name}.old`);
       if (targetExists) {
         await rename(target, oldTarget);

@@ -109,7 +109,7 @@ export async function runCli(args: string[], runtime: CliRuntime): Promise<numbe
       await initProject({
         ...options,
         installHook: flags.installHook ?? true,
-        hookCommand: flags.hookCommand ?? "memport hook session-start --project-root \"$CLAUDE_PROJECT_DIR\" --silent"
+        hookCommand: flags.hookCommand ?? runtime.env.MEMPORT_HOOK_COMMAND ?? "memport hook session-start --project-root \"$CLAUDE_PROJECT_DIR\" --silent"
       });
       if (!flags.silent) runtime.stderr("完成！MemPort 已初始化当前项目\n");
       return 0;
