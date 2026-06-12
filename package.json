@@ -6,12 +6,13 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
-    "memport": "./bin/memport"
+    "memport": "./bin/memport.js"
   },
   "files": [
     "bin/",
     "dist/",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
@@ -25,9 +26,22 @@
     "claude-code",
     "codex",
     "memory",
-    "cli"
+    "cli",
+    "agent",
+    "anthropic",
+    "openai-codex",
+    "sync"
   ],
+  "author": "wjs <1550381401@qq.com>",
   "license": "MIT",
+  "homepage": "https://github.com/jeesonwang/MemPort#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jeesonwang/MemPort.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jeesonwang/MemPort/issues"
+  },
   "engines": {
     "node": ">=20"
   },

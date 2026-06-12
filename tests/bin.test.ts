@@ -19,7 +19,7 @@ interface RunResult {
 function runBin(args: string[], options: { stdin?: string } = {}): Promise<RunResult> {
   return new Promise((resolve, reject) => {
     const projectRoot = new URL("..", import.meta.url).pathname;
-    const child = spawn(process.execPath, [join(projectRoot, "bin", "memport"), ...args], {
+    const child = spawn(process.execPath, [join(projectRoot, "bin", "memport.js"), ...args], {
       stdio: ["pipe", "pipe", "pipe"]
     });
 
