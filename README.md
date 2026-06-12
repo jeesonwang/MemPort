@@ -19,7 +19,6 @@ npx memport sync
 ```bash
 memport init
 memport sync
-memport hook session-start --project-root "$CLAUDE_PROJECT_DIR" --silent
 ```
 
 `memport init` creates `.claude/`, installs a project-local SessionStart hook in `.claude/settings.local.json`, and runs one sync.
