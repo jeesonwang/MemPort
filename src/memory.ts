@@ -36,6 +36,7 @@ async function walk(root: string, current = root): Promise<string[]> {
       if (DENY_DIRS.has(top)) continue;
       const dirFiles = await walk(root, absolute);
       for (const file of dirFiles) {
+        if (!isAllowlistedMemoryFile(file)) continue;
         if (file.startsWith("rollout_summaries/")) {
           rolloutFiles.push(file);
         } else {

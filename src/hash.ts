@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { readFile, readdir, stat } from "node:fs/promises";
-import { join, relative } from "node:path";
+import { join, relative, sep } from "node:path";
 
 export async function hashFile(filePath: string): Promise<string> {
   const content = await readFile(filePath);
@@ -29,7 +29,8 @@ export async function hashDirectory(dirPath: string): Promise<string> {
 
   for (const file of files) {
     const fileStat = await stat(file);
-    digest.update(relative(dirPath, file));
+    const rel = relative(dirPath, file).split(sep).join("/");
+    digest.update(rel);
     digest.update(String(fileStat.size));
     digest.update(await readFile(file));
   }

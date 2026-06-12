@@ -30,6 +30,19 @@ describe("listAllowlistedMemoryFiles", () => {
       "rollout_summaries/a.md"
     ]);
   });
+
+  it("excludes unknown files even when nested under unknown top-level directories", async () => {
+    const codex = await makeTempDir();
+    tempDirs.push(codex);
+    await writeText(join(codex, "memory_summary.md"), "summary");
+    // A future / unknown top-level directory should not silently smuggle files in.
+    await writeText(join(codex, "projects", "foo", "notes.md"), "notes");
+    await writeText(join(codex, "projects", "foo", "MEMORY.md"), "nested registry");
+
+    await expect(listAllowlistedMemoryFiles(codex)).resolves.toEqual([
+      "memory_summary.md"
+    ]);
+  });
 });
 
 describe("syncDetailedMemories", () => {
