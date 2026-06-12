@@ -37,7 +37,7 @@ describe("runSessionStartHook", () => {
 
     expect(output.hookSpecificOutput?.hookEventName).toBe("SessionStart");
     expect(output.hookSpecificOutput?.reloadSkills).toBe(true);
-    expect(output.hookSpecificOutput?.additionalContext).toContain("MemPort 已同步 Codex 记忆");
+    expect(output.hookSpecificOutput?.additionalContext).toContain("MemPort has synced Codex memories");
   });
 
   it("returns systemMessage instead of throwing on sync failure", async () => {
@@ -55,6 +55,6 @@ describe("runSessionStartHook", () => {
       logger: silentLogger
     });
 
-    expect(output.systemMessage).toContain("MemPort 同步失败");
+    expect(output.systemMessage).toContain("MemPort sync failed");
   });
 });

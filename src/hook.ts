@@ -40,7 +40,7 @@ export async function runSessionStartHook(input: RunSessionStartHookInput): Prom
     const result = await syncMemories(options);
     const hookSpecificOutput: NonNullable<HookOutput["hookSpecificOutput"]> = {
       hookEventName: "SessionStart",
-      additionalContext: "MemPort 已同步 Codex 记忆。摘要已写入 .claude/CLAUDE.md，详细记忆位于 .claude/codex-memories/。"
+      additionalContext: "MemPort has synced Codex memories. The summary is written to .claude/CLAUDE.md and detailed memories live in .claude/codex-memories/."
     };
     if (result.skillsChanged) {
       hookSpecificOutput.reloadSkills = true;
@@ -51,7 +51,7 @@ export async function runSessionStartHook(input: RunSessionStartHookInput): Prom
     };
   } catch (error) {
     return {
-      systemMessage: `MemPort 同步失败：${(error as Error).message}`
+      systemMessage: `MemPort sync failed: ${(error as Error).message}`
     };
   }
 }

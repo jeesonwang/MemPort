@@ -20,19 +20,19 @@ export function renderMemportBlock(summary: string, now: Date): string {
   return `${MEMPORT_BEGIN}
 # Codex Memories
 
-> 以下记忆来自 Codex，由 MemPort 同步
-> 最后同步时间：${timestamp}
-> 此章节由 MemPort 管理，手动修改将在下次同步时被覆盖
+> Memories below are imported from Codex and synced by MemPort.
+> Last synced at: ${timestamp}
+> This section is managed by MemPort; manual edits will be overwritten on the next sync.
 
 ${summary.trim()}
 
 ---
 
-**查找详细记忆：**
-如需查找特定主题的详细记忆，可以使用以下方式：
-- 使用 grep 搜索：\`grep -r "关键词" .claude/codex-memories/\`
-- 阅读索引文件：\`.claude/codex-memories/MEMORY.md\`
-- 直接读取记忆文件：\`.claude/codex-memories/*.md\`
+**Looking up detailed memories:**
+To find detailed memories on a specific topic, you can:
+- Search with grep: \`grep -r "<keyword>" .claude/codex-memories/\`
+- Read the index file: \`.claude/codex-memories/MEMORY.md\`
+- Read individual memory files: \`.claude/codex-memories/*.md\`
 ${MEMPORT_END}
 `;
 }

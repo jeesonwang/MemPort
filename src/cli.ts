@@ -55,8 +55,8 @@ function makeLogger(runtime: CliRuntime, silent: boolean): Logger {
     info: (message) => {
       if (!silent) runtime.stderr(`✓ ${message}\n`);
     },
-    warn: (message) => runtime.stderr(`警告：${message}\n`),
-    error: (message) => runtime.stderr(`错误：${message}\n`)
+    warn: (message) => runtime.stderr(`Warning: ${message}\n`),
+    error: (message) => runtime.stderr(`Error: ${message}\n`)
   };
 }
 
@@ -90,7 +90,7 @@ export async function runCli(args: string[], runtime: CliRuntime): Promise<numbe
         logger: makeLogger(runtime, flags.silent)
       });
       await syncMemories(options);
-      if (!flags.silent) runtime.stderr("完成！Codex 记忆已同步到当前项目\n");
+      if (!flags.silent) runtime.stderr("Done. Codex memories have been synced to the current project.\n");
       return 0;
     }
 
@@ -111,7 +111,7 @@ export async function runCli(args: string[], runtime: CliRuntime): Promise<numbe
         installHook: flags.installHook ?? true,
         hookCommand: flags.hookCommand ?? runtime.env.MEMPORT_HOOK_COMMAND ?? "memport hook session-start --project-root \"$CLAUDE_PROJECT_DIR\" --silent"
       });
-      if (!flags.silent) runtime.stderr("完成！MemPort 已初始化当前项目\n");
+      if (!flags.silent) runtime.stderr("Done. MemPort has been initialized for the current project.\n");
       return 0;
     }
 
@@ -131,7 +131,7 @@ export async function runCli(args: string[], runtime: CliRuntime): Promise<numbe
     runtime.stderr(`Unknown command: ${[command, subcommand].filter(Boolean).join(" ")}\n`);
     return 1;
   } catch (error) {
-    runtime.stderr(`错误：${(error as Error).message}\n`);
+    runtime.stderr(`Error: ${(error as Error).message}\n`);
     return 1;
   }
 }

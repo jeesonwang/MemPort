@@ -32,14 +32,14 @@ export async function syncMemories(options: SyncOptions): Promise<SyncResult> {
 
   const runId = `run-${options.now.getTime()}-${Math.random().toString(16).slice(2)}`;
   const summary = await readSummary(options.codexPath);
-  if (!options.silent) options.logger.info("读取 Codex 记忆摘要");
+  if (!options.silent) options.logger.info("Reading Codex memory summary");
 
   const detailed = await syncDetailedMemories({
     projectRoot: options.projectRoot,
     codexPath: options.codexPath,
     runId
   });
-  if (!options.silent) options.logger.info(`复制 ${detailed.filesCopied} 个记忆文件到 .claude/codex-memories/`);
+  if (!options.silent) options.logger.info(`Copied ${detailed.filesCopied} memory file(s) to .claude/codex-memories/`);
 
   const skills = await syncSkills({
     projectRoot: options.projectRoot,
@@ -53,7 +53,7 @@ export async function syncMemories(options: SyncOptions): Promise<SyncResult> {
   for (const warning of skills.warnings) {
     options.logger.warn(warning.message);
   }
-  if (!options.silent) options.logger.info(`同步 ${skills.synced} 个 Codex skills 到 .claude/skills/`);
+  if (!options.silent) options.logger.info(`Synced ${skills.synced} Codex skill(s) to .claude/skills/`);
 
   let claudeMdUpdated = false;
   if (options.updateClaudeMd) {
@@ -63,7 +63,7 @@ export async function syncMemories(options: SyncOptions): Promise<SyncResult> {
       now: options.now
     });
     claudeMdUpdated = claude.changed;
-    if (!options.silent) options.logger.info("更新 .claude/CLAUDE.md");
+    if (!options.silent) options.logger.info("Updated .claude/CLAUDE.md");
   }
 
   return {
